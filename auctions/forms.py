@@ -1,5 +1,7 @@
 from django import forms
 
+from .models import Category
+
 class AddForm(forms.Form):
 
     item_name = forms.CharField(
@@ -7,6 +9,10 @@ class AddForm(forms.Form):
         max_length=64
         )
     
+    item_categories = forms.ModelMultipleChoiceField(
+        Category.objects.all(),
+    )
+
     item_description = forms.CharField(
         label="Description",
         widget=forms.Textarea,
