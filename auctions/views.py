@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -14,6 +15,7 @@ def index(request):
         "posts": posts,
     })
 
+@login_required
 def add_view(request):
     if request.method == "POST":
         form = AddForm(request.POST)
@@ -24,12 +26,15 @@ def add_view(request):
             })
         
         cform = form.cleaned_data
+
+        # Assign data to instance of Item
         new_item = Item(
             name=cform["item_name"],
             description=cform["item_description"],
             img_url=cform["item_img"],
         )
 
+        # Assign data to instance of Post
         new_post = Post(
             item=new_item,
             seller=request.user,
@@ -37,8 +42,11 @@ def add_view(request):
         )
 
         new_item.save()
+        # Item needs to have an id before .set() can be used
+        new_item.categories.set(cform["item_categories"])
         new_post.save()
 
+        return HttpResponseRedirect(reverse("index"))
 
     # If request method is GET
     else:
@@ -70,6 +78,16 @@ def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
+def post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    bids = Bid.objects.filter(post__id=post_id)
+    comments = Comment.objects.filter(posting__id=post_id)
+
+    return render(request, "auctions/post.html", {
+        "post": post,
+        "bids": bids,
+        "comments": comments,
+    })
 
 def register(request):
     if request.method == "POST":

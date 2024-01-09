@@ -4,7 +4,7 @@
     <h2>Active Listings</h2>
 
     {% for post in posts %}
-    <h3>{{ post.item.name }}</h3>
+    <a href="{% url 'post' post_id=post.id %}" class="h3">{{ post.item.name }}</a>
     <div>posted by {{ post.seller }}</div>
     <div>current price: {{ post.initial_p }}</div>
     <div>{{ post.item.description }}</div>

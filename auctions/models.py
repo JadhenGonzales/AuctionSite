@@ -20,7 +20,7 @@ class Item(models.Model):
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=500)
     img_url = models.CharField(blank=True, max_length=100)
-    categories = models.ManyToManyField(Category, blank=True, null=True, related_name="items")
+    categories = models.ManyToManyField(Category, blank=True, related_name="items")
 
     def __str__(self) -> str:
         return f"{self.name}"

@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{ name }}
+{% endblock %}
+
+{% block body %}
+
+    <h1>{{ post.item.name }}</h1>
+    <div>posted by {{ post.seller }}</div>
+    <div>current price: {{ post.initial_p }}</div>
+    <div>{{ post.item.description }}</div>
+
+    <h2>Bids:</h2>
+    {% if bids %}
+        <ul>
+            {% for bid in bids %}
+                <li>{{ bid }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div>No bids.</div>
+    {% endif %}
+    
+    <h2>Comments:</h2>
+    {% if comments %}
+        <ul>
+            {% for comment in comments %}
+                <li>{{ comment }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div>No Comments.</div>
+    {% endif %}
+
+{% endblock %}
