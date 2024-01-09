@@ -5,10 +5,22 @@ from django.db import models
 class User(AbstractUser):
     pass
 
+class Category(models.Model):
+    cat_name = models.CharField(max_length=64)
+    cat_description = models.CharField(max_length=500)
+
+    # Changes plural form in admin page (Default is categorys)
+    class Meta:
+        verbose_name_plural = "categories"
+
+    def __str__(self) -> str:
+        return f"{self.cat_name}"
+
 class Item(models.Model):
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=500)
     img_url = models.CharField(blank=True, max_length=100)
+    categories = models.ManyToManyField(Category, blank=True, null=True, related_name="items")
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -41,11 +53,3 @@ class Comment(models.Model):
     def __str__(self) -> str:
         return f"{self.user}: {self.content}"
 
-class Category(models.Model):
-    cat_name = models.CharField(max_length=64)
-    cat_description = models.CharField(max_length=500)
-    cat_items = models.ManyToManyField(Item, blank=True, related_name="categories")
-
-    # Changes plural form in admin page (Default is categorys)
-    class Meta:
-        verbose_name_plural = "categories"

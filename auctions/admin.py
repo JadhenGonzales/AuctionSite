@@ -10,13 +10,13 @@ class BidAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("cat_name", "cat_description")
 
-    filter_horizontal = ("cat_items",)
-
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("posting", "user", "content")
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ("name", "description", "img_url",)
+
+    filter_horizontal = ("categories",)
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ("item", "seller",)
