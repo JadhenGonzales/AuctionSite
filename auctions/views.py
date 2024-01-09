@@ -4,12 +4,47 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import Bid, Category, Comment, Item, Post, User
+from .forms import AddForm
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    posts = Post.objects.all()
+    return render(request, "auctions/index.html", {
+        "posts": posts,
+    })
 
+def add_view(request):
+    if request.method == "POST":
+        form = AddForm(request.POST)
+        if not form.is_valid():
+            # If form answers are invalid
+            return render(request, "users/login.html", {
+                "form": AddForm(),
+            })
+        
+        cform = form.cleaned_data
+        new_item = Item(
+            name=cform["item_name"],
+            description=cform["item_description"],
+            img_url=cform["item_img"],
+        )
+
+        new_post = Post(
+            item=new_item,
+            seller=request.user,
+            initial_p=cform["initial_bid"],
+        )
+
+        new_item.save()
+        new_post.save()
+
+
+    # If request method is GET
+    else:
+        return render(request, "auctions/add.html", {
+            "form": AddForm(),
+        })
 
 def login_view(request):
     if request.method == "POST":

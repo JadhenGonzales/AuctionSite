@@ -3,5 +3,10 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    TODO
+    {% for post in posts %}
+    <h3>{{ post.item.name }}</h3>
+    <div>posted by {{ post.seller }}</div>
+    <div>current price: {{ post.initial_p }}</div>
+    <div>{{ post.item.description }}</div>
+    {% endfor %}
 {% endblock %}

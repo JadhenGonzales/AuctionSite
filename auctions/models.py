@@ -21,6 +21,7 @@ class Post(models.Model):
     def __str__(self) -> str:
         return f"{self.item} auction by {self.seller}"
 
+    # Make sure that one item only has one posting and vice versa
     class Meta:
         unique_together = ('item',)
 
@@ -45,5 +46,6 @@ class Category(models.Model):
     cat_description = models.CharField(max_length=500)
     cat_items = models.ManyToManyField(Item, blank=True, related_name="categories")
 
+    # Changes plural form in admin page (Default is categorys)
     class Meta:
         verbose_name_plural = "categories"
