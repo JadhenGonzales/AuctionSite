@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import Bid, Category, Comment, Item, Post, User
-from .forms import AddForm
+from .forms import AddForm, BidForm, CommentForm
 
 
 def index(request):
@@ -80,12 +80,15 @@ def logout_view(request):
 
 def post(request, post_id):
     post = Post.objects.get(id=post_id)
-    bids = Bid.objects.filter(post__id=post_id)
-    comments = Comment.objects.filter(posting__id=post_id)
-
+    # "-fieldname" is used instead of .reverse() because .reverse() fetches the query list then reverses it.
+    bids = Bid.objects.filter(post__id=post_id).order_by("-bid_datetime")
+    comments = Comment.objects.filter(posting__id=post_id).order_by("-comment_datetime")
+    
     return render(request, "auctions/post.html", {
         "post": post,
         "bids": bids,
+        "bidform": BidForm(),
+        "commentform": CommentForm(),
         "comments": comments,
     })
 

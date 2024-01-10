@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Category
+from .models import Bid, Category, Comment
 
 class AddForm(forms.Form):
     # For Adding postings
@@ -30,15 +30,13 @@ class AddForm(forms.Form):
     )
 
 
-class CommentForm:
-    content = forms.CharField(
-        widget=forms.Textarea(),
-        label="Comment",
-        max_length=200,
-    )
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["content"]
 
 
-class BidForm:
-    amount = forms.IntegerField(
-        label="Bid",
-    )
+class BidForm(forms.ModelForm):
+    class Meta:
+        model = Bid
+        fields = ["amount"]

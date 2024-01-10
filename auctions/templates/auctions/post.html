@@ -12,10 +12,18 @@
     <div>{{ post.item.description }}</div>
 
     <h2>Bids:</h2>
+    {% if user.is_authenticated %}
+        <form>
+            {% csrf_token %}
+            {{ bidform }}
+            <button type="submit">Bid</button>
+        </form>
+    {% endif %}
+
     {% if bids %}
         <ul>
             {% for bid in bids %}
-                <li>{{ bid }}</li>
+                <li>{{ bid.bid_datetime }}: {{ bid }}</li>
             {% endfor %}
         </ul>
     {% else %}
@@ -23,10 +31,19 @@
     {% endif %}
     
     <h2>Comments:</h2>
+
+    {% if user.is_authenticated %}
+        <form>
+            {% csrf_token %}
+            {{ commentform }}
+            <button type="submit">Comment</button>
+        </form>
+    {% endif %}
+
     {% if comments %}
         <ul>
             {% for comment in comments %}
-                <li>{{ comment }}</li>
+                <li>{{ comment.comment_datetime }}: {{ comment }}</li>
             {% endfor %}
         </ul>
     {% else %}

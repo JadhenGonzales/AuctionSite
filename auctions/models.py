@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -29,6 +30,7 @@ class Post(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="item_postings")
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     initial_p = models.IntegerField()
+    post_datetime = models.DateTimeField()
 
     def __str__(self) -> str:
         return f"{self.item} auction by {self.seller}"
@@ -41,14 +43,26 @@ class Bid(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="bids")
     bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bid_posts")
     amount = models.IntegerField()
+    bid_datetime = models.DateTimeField()
 
     def __str__(self) -> str:
         return f"{self.amount} gold - {self.bidder}"
+    
+    # Alter default Bid.save() behaviour
+    def save(self, *args, **kwargs):
+        # Get last bid on same post
+        last_bid = Bid.objects.filter(post=self.post).order_by('-bid_datetime').first()
+
+        if last_bid and self.amount <= last_bid.amount:
+            raise ValidationError("New bid amount must be higher than the last bid.")
+
+        super().save(*args, **kwargs)
 
 class Comment(models.Model):
     posting = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment_posts")
     content = models.CharField(max_length=200)
+    comment_datetime = models.DateTimeField()
 
     def __str__(self) -> str:
         return f"{self.user}: {self.content}"

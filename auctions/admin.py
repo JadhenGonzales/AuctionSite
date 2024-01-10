@@ -5,13 +5,13 @@ from .models import Bid, Category, Comment, Item, Post, User
 
 # Register your models here.
 class BidAdmin(admin.ModelAdmin):
-    list_display = ("post", "bidder", "amount",)
+    list_display = ("post", "bid_datetime", "bidder", "amount",)
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("cat_name", "cat_description")
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("posting", "user", "content")
+    list_display = ("posting", "comment_datetime", "user", "content")
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ("name", "description", "img_url",)
@@ -19,7 +19,7 @@ class ItemAdmin(admin.ModelAdmin):
     filter_horizontal = ("categories",)
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("item", "seller",)
+    list_display = ("item", "seller", "post_datetime")
 
 class CustomUserAdmin(BaseUserAdmin):
     list_display = ("username", "first_name", "last_name", "is_staff",)
