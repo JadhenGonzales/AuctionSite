@@ -12,7 +12,7 @@ from .forms import AddForm, BidForm, CommentForm
 
 
 def index(request):
-    posts = Post.objects.all()
+    posts = Post.objects.filter(is_open=True)
     return render(request, "auctions/index.html", {
         "posts": posts,
     })
@@ -35,7 +35,9 @@ def add_comment(request, post_id):
         target_post = Post.objects.get(pk=post_id)
         prefill = Comment(user=request.user, comment_datetime=datetime.now(), posting=target_post)
         new_comment = CommentForm(request.POST, instance=prefill)
+        # ModelForm.save() automatically checks form.errors
         new_comment.save()
+
         return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
 
     else:
@@ -106,18 +108,31 @@ def logout_view(request):
     return HttpResponseRedirect(reverse("index"))
 
 def post(request, post_id):
-    post = Post.objects.get(id=post_id)
-    # "-fieldname" is used instead of .reverse() because .reverse() fetches the query list then reverses it.
-    bids = Bid.objects.filter(post__id=post_id).order_by("-bid_datetime")
-    comments = Comment.objects.filter(posting__id=post_id).order_by("-comment_datetime")
+    if request.method == "POST":
+        post = Post.objects.get(id=post_id)
+        if post.is_open and request.user.is_authenticated and request.user == post.seller:
+            post.is_open = False
+            post.save()
+            return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
 
-    return render(request, "auctions/post.html", {
-        "post": post,
-        "bids": bids,
-        "bidform": BidForm(),
-        "commentform": CommentForm(),
-        "comments": comments,
-    })
+        else:
+            return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
+    
+    else:
+        # If request.method is GET
+        post = Post.objects.get(id=post_id)
+
+        # "-fieldname" is used instead of .reverse() because .reverse() fetches the query list then reverses it.
+        bids = Bid.objects.filter(post__id=post_id).order_by("-bid_datetime")
+        comments = Comment.objects.filter(posting__id=post_id).order_by("-comment_datetime")
+
+        return render(request, "auctions/post.html", {
+            "post": post,
+            "bids": bids,
+            "bidform": BidForm(),
+            "commentform": CommentForm(),
+            "comments": comments,
+        })
 
 def register(request):
     if request.method == "POST":
@@ -144,3 +159,10 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+
+def view_all(request):
+    posts = Post.objects.all()
+    return render(request, "auctions/index.html", {
+        "posts": posts,
+    })

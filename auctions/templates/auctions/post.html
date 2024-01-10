@@ -11,8 +11,19 @@
     <div>current price: {{ post.initial_p }}</div>
     <div>{{ post.item.description }}</div>
 
+    {% if post.is_open %}
+        {% if user.is_authenticated and user == post.seller %}
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Close Listing</button>
+        </form>
+        {% endif %}
+    {% else %}
+        <div>This listing is closed.</div>
+    {% endif %}
+
     <h2>Bids:</h2>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and post.is_open %}
         <form action="{% url 'bid' post_id=post.id %}" method="POST">
             {% csrf_token %}
             {{ bidform.amount }}
