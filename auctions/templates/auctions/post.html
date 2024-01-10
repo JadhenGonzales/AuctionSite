@@ -5,6 +5,14 @@
 {% endblock %}
 
 {% block body %}
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
 
     <h1>{{ post.item.name }}</h1>
     <div>posted by {{ post.seller }}</div>
@@ -27,7 +35,7 @@
     {% endif %}
 
     <h2>Bids:</h2>
-    {% if user.is_authenticated and post.is_open %}
+    {% if user.is_authenticated and not post.winner %}
         <form action="{% url 'bid' post_id=post.id %}" method="POST">
             {% csrf_token %}
             {{ bidform.amount }}

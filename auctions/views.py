@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -18,17 +19,28 @@ def index(request):
         "header": "Active Listings",
     })
 
+
 @login_required
 def add_bid(request, post_id):
     if request.method == "POST":
-        target_post = Post.objects.get(pk=post_id)
-        prefill = Bid(bidder=request.user, bid_datetime=datetime.now(), post=target_post)
-        new_bid = BidForm(request.POST, instance=prefill)
-        new_bid.save()
-        return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
+        # Create a bid object from form submission.
+        target = Post.objects.get(pk=post_id)
+        new_bid = BidForm(request.POST, instance=Bid(
+            bidder=request.user,
+            bid_datetime=datetime.now(),
+            post=target,
+        ))
 
-    else:
-        return HttpResponseRedirect(reverse("index"))
+        # Catch errors and send message back to view.post
+        try:
+            new_bid.save()
+            messages.success(request, "Bid submitted successfully!")
+        except Exception as e:
+            messages.warning(request, f"Failed to submit bid. Error: {e}")
+
+    # Redirect back to view.post
+    return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
+
 
 @login_required
 def add_comment(request, post_id):
@@ -128,12 +140,14 @@ def post(request, post_id):
         bids = Bid.objects.filter(post__id=post_id).order_by("-bid_datetime")
         comments = Comment.objects.filter(posting__id=post_id).order_by("-comment_datetime")
 
+
         return render(request, "auctions/post.html", {
             "post": post,
             "bids": bids,
             "bidform": BidForm(),
             "commentform": CommentForm(),
             "comments": comments,
+            "messages": messages.get_messages(request),
         })
 
 def register(request):
