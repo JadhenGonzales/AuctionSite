@@ -19,7 +19,7 @@ class ItemAdmin(admin.ModelAdmin):
     filter_horizontal = ("categories",)
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("item", "seller", "post_datetime", "is_open",)
+    list_display = ("item", "seller", "post_datetime", "winner",)
 
 class CustomUserAdmin(BaseUserAdmin):
     list_display = ("username", "first_name", "last_name", "is_staff",)

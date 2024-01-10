@@ -12,9 +12,10 @@ from .forms import AddForm, BidForm, CommentForm
 
 
 def index(request):
-    posts = Post.objects.filter(is_open=True)
+    posts = Post.objects.filter(winner__isnull=True)
     return render(request, "auctions/index.html", {
         "posts": posts,
+        "header": "Active Listings",
     })
 
 @login_required
@@ -109,10 +110,11 @@ def logout_view(request):
 
 def post(request, post_id):
     if request.method == "POST":
-        post = Post.objects.get(id=post_id)
-        if post.is_open and request.user.is_authenticated and request.user == post.seller:
-            post.is_open = False
-            post.save()
+        target_post = Post.objects.get(id=post_id)
+        if not target_post.winner and request.user.is_authenticated and request.user == target_post.seller:
+            winning = Bid.objects.filter(post=target_post).order_by('-bid_datetime').first()
+            target_post.winner = winning.bidder
+            target_post.save()
             return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
 
         else:
@@ -161,8 +163,13 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
-def view_all(request):
-    posts = Post.objects.all()
+def view_all(request, category):
+    if category == "all":
+        posts = Post.objects.all()
+    else:
+        posts = Post.objects.filter(item__categories__cat_name=category)
+    
     return render(request, "auctions/index.html", {
         "posts": posts,
+        "header": category.capitalize(),
     })

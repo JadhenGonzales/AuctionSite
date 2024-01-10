@@ -31,7 +31,7 @@ class Post(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     initial_p = models.IntegerField()
     post_datetime = models.DateTimeField()
-    is_open = models.BooleanField(db_default=True)
+    winner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="wins")
 
     def __str__(self) -> str:
         return f"{self.item} auction by {self.seller}"

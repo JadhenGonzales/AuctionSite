@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block title %}
-    {{ name }}
+    {{ post.item.name }}
 {% endblock %}
 
 {% block body %}
@@ -11,7 +11,7 @@
     <div>current price: {{ post.initial_p }}</div>
     <div>{{ post.item.description }}</div>
 
-    {% if post.is_open %}
+    {% if not post.winner %}
         {% if user.is_authenticated and user == post.seller %}
         <form method="POST">
             {% csrf_token %}
@@ -19,7 +19,11 @@
         </form>
         {% endif %}
     {% else %}
-        <div>This listing is closed.</div>
+        {% if user.is_authenticated and user == post.winner %}
+            <div> You have won this listing </div>
+        {% else %}
+            <div>This listing is closed.</div>
+        {% endif %}
     {% endif %}
 
     <h2>Bids:</h2>
