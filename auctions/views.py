@@ -45,16 +45,23 @@ def add_bid(request, post_id):
 @login_required
 def add_comment(request, post_id):
     if request.method == "POST":
-        target_post = Post.objects.get(pk=post_id)
-        prefill = Comment(user=request.user, comment_datetime=datetime.now(), posting=target_post)
-        new_comment = CommentForm(request.POST, instance=prefill)
-        # ModelForm.save() automatically checks form.errors
-        new_comment.save()
+        # Create a comment object from form submission
+        target = Post.objects.get(pk=post_id)
+        new_comment = CommentForm(request.POST, instance=Comment(
+            user=request.user,
+            comment_datetime=datetime.now(),
+            posting=target,
+        ))
 
-        return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
+        # Catch errors and send message back to view.post in case of an error
+        try:
+            new_comment.save()
+        except Exception as e:
+            messages.warning(request, f"Failed to submit comment. Error: {e}")
 
-    else:
-        return HttpResponseRedirect(reverse("index"))
+    #Redirect back to view.post
+    return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
+
 
 @login_required
 def add_view(request):
