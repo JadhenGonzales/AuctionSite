@@ -5,6 +5,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
+from datetime import datetime
+
 from .models import Bid, Category, Comment, Item, Post, User
 from .forms import AddForm, BidForm, CommentForm
 
@@ -14,6 +16,30 @@ def index(request):
     return render(request, "auctions/index.html", {
         "posts": posts,
     })
+
+@login_required
+def add_bid(request, post_id):
+    if request.method == "POST":
+        target_post = Post.objects.get(pk=post_id)
+        prefill = Bid(bidder=request.user, bid_datetime=datetime.now(), post=target_post)
+        new_bid = BidForm(request.POST, instance=prefill)
+        new_bid.save()
+        return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
+
+    else:
+        return HttpResponseRedirect(reverse("index"))
+
+@login_required
+def add_comment(request, post_id):
+    if request.method == "POST":
+        target_post = Post.objects.get(pk=post_id)
+        prefill = Comment(user=request.user, comment_datetime=datetime.now(), posting=target_post)
+        new_comment = CommentForm(request.POST, instance=prefill)
+        new_comment.save()
+        return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
+
+    else:
+        return HttpResponseRedirect(reverse("index"))
 
 @login_required
 def add_view(request):
@@ -39,6 +65,7 @@ def add_view(request):
             item=new_item,
             seller=request.user,
             initial_p=cform["initial_bid"],
+            post_datetime=datetime.now()
         )
 
         new_item.save()
@@ -46,7 +73,7 @@ def add_view(request):
         new_item.categories.set(cform["item_categories"])
         new_post.save()
 
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("post", kwargs={"post_id": new_post.id,}))
 
     # If request method is GET
     else:
@@ -83,7 +110,7 @@ def post(request, post_id):
     # "-fieldname" is used instead of .reverse() because .reverse() fetches the query list then reverses it.
     bids = Bid.objects.filter(post__id=post_id).order_by("-bid_datetime")
     comments = Comment.objects.filter(posting__id=post_id).order_by("-comment_datetime")
-    
+
     return render(request, "auctions/post.html", {
         "post": post,
         "bids": bids,

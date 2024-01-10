@@ -8,4 +8,4 @@ ___
 
 ### Bid and comment ModelForms
 
-<p>The ModelForms for both models does not include the posting, user, and datetime in its fields. This makes sure that only the content is gathered from the front-end and everything else is assigned at the back-end ensuring it cannot be tampered with.
+<p>The ModelForms for both models does not include the user and datetime in its fields. This makes sure that only the content and posting_id is gathered from the front-end and everything else is assigned at the back-end ensuring it cannot be tampered with.

@@ -33,10 +33,10 @@ class AddForm(forms.Form):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ["content"]
+        fields = ["content",]
 
 
 class BidForm(forms.ModelForm):
     class Meta:
         model = Bid
-        fields = ["amount"]
+        fields = ["amount",]

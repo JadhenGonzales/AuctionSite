@@ -13,9 +13,9 @@
 
     <h2>Bids:</h2>
     {% if user.is_authenticated %}
-        <form>
+        <form action="{% url 'bid' post_id=post.id %}" method="POST">
             {% csrf_token %}
-            {{ bidform }}
+            {{ bidform.amount }}
             <button type="submit">Bid</button>
         </form>
     {% endif %}
@@ -33,7 +33,7 @@
     <h2>Comments:</h2>
 
     {% if user.is_authenticated %}
-        <form>
+        <form action="{% url 'comment' post_id=post.id %}" method="POST">
             {% csrf_token %}
             {{ commentform }}
             <button type="submit">Comment</button>
