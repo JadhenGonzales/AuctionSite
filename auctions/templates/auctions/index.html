@@ -1,8 +1,6 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>{{ header }}</h2>
-
     {% for post in posts %}
     <a href="{% url 'post' post_id=post.id %}" class="h3">{{ post.item.name }}</a>
     <div>posted by {{ post.seller }}</div>

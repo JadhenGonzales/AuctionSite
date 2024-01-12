@@ -15,6 +15,7 @@ from .forms import AddForm, BidForm, CommentForm
 def index(request):
     posts = Post.objects.filter(winner__isnull=True)
     return render(request, "auctions/index.html", {
+        "current_page": "index",
         "posts": posts,
         "header": "Active Listings",
     })
@@ -108,6 +109,7 @@ def add_view(request):
     else:
         return render(request, "auctions/add.html", {
             "form": AddForm(),
+            "current_page": "add",
             "message": messages.get_messages(request),
         })
 
@@ -128,7 +130,9 @@ def login_view(request):
                 "message": "Invalid username and/or password."
             })
     else:
-        return render(request, "auctions/login.html")
+        return render(request, "auctions/login.html", {
+            "current_page": "login",
+        })
 
 
 def logout_view(request):
@@ -162,6 +166,7 @@ def post(request, post_id):
             "bidform": BidForm(),
             "commentform": CommentForm(),
             "comments": comments,
+            "current_page": "post",
             "messages": messages.get_messages(request),
         })
 
@@ -189,7 +194,9 @@ def register(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "auctions/register.html")
+        return render(request, "auctions/register.html", {
+            "current_page": "register",
+        })
 
 
 def view_all(request, category):
@@ -201,4 +208,5 @@ def view_all(request, category):
     return render(request, "auctions/index.html", {
         "posts": posts,
         "header": category.capitalize(),
+        "current_page": category
     })
