@@ -1,10 +1,9 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    <div class="d-flex flex-wrap pt-2">
     {% for post in posts %}
-    <a href="{% url 'post' post_id=post.id %}" class="h3">{{ post.item.name }}</a>
-    <div>posted by {{ post.seller }}</div>
-    <div>current price: {{ post.initial_p }}</div>
-    <div>{{ post.item.description }}</div>
+        {% include "reusables/card.html" with name=post.item.name description=post.item.description price=post.initial_p bid_price=post.bid img_src=post.item.img_url id=post.id %}
     {% endfor %}
+    </div>
 {% endblock %}

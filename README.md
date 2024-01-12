@@ -18,4 +18,4 @@ ___
 ## UI
 
 ### nav_filters
-<p> A custom filter ``'navbar_item'|is_current:current page`` is added to make sure that current pages are highlighted in the navbar.
+<p> A custom filter ``'navbar_item'|is_current:current_page`` is added to make sure that current pages are highlighted in the navbar.

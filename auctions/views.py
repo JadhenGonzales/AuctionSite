@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
+from django.db.models import OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -13,7 +14,8 @@ from .forms import AddForm, BidForm, CommentForm
 
 
 def index(request):
-    posts = Post.objects.filter(winner__isnull=True)
+    bids = Bid.objects.filter(post=OuterRef('pk')).order_by('-amount').values('amount')[:1]
+    posts = Post.objects.annotate(bid=Subquery(bids))
     return render(request, "auctions/index.html", {
         "current_page": "index",
         "posts": posts,
