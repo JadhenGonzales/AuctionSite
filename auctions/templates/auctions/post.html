@@ -5,16 +5,12 @@
 {% endblock %}
 
 {% block body %}
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</div>
-        {% endfor %}
-    </div>
+    <h1>{{ post.item.name }}</h1>
+
+    {% if post.item.img_url %}
+        <img src="{{ post.item.img_url }}">
     {% endif %}
 
-
-    <h1>{{ post.item.name }}</h1>
     <div>posted by {{ post.seller }}</div>
     <div>current price: {{ post.initial_p }}</div>
     <div>{{ post.item.description }}</div>

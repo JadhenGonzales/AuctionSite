@@ -11,6 +11,7 @@ class AddForm(forms.Form):
     
     item_categories = forms.ModelMultipleChoiceField(
         Category.objects.all(),
+        required=False,
     )
 
     item_description = forms.CharField(

@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -64,13 +64,15 @@ def add_comment(request, post_id):
 
 
 @login_required
+@transaction.atomic
 def add_view(request):
     if request.method == "POST":
         form = AddForm(request.POST)
+
+        # Handle Invalid form answers
         if not form.is_valid():
-            # If form answers are invalid
-            return render(request, "users/login.html", {
-                "form": AddForm(),
+            return render(request, "auctions/add.html", {
+                "form": form,
             })
         
         cform = form.cleaned_data
@@ -90,10 +92,15 @@ def add_view(request):
             post_datetime=datetime.now()
         )
 
-        new_item.save()
-        # Item needs to have an id before .set() can be used
-        new_item.categories.set(cform["item_categories"])
-        new_post.save()
+        try:
+            with transaction.atomic():
+                new_item.save()
+                # Item needs to have an id before .set() can be used
+                new_item.categories.set(cform["item_categories"])
+                new_post.save()
+        except Exception as e:
+            messages.warning(request, f"Failed to save posting. Error: {e}")
+            return HttpResponseRedirect(reverse("add"))
 
         return HttpResponseRedirect(reverse("post", kwargs={"post_id": new_post.id,}))
 
@@ -101,6 +108,7 @@ def add_view(request):
     else:
         return render(request, "auctions/add.html", {
             "form": AddForm(),
+            "message": messages.get_messages(request),
         })
 
 def login_view(request):
