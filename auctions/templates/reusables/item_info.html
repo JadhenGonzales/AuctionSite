@@ -1,0 +1,17 @@
+<div class="row row-cols-1 border border-black pb-3">
+    {% if post.item.img_url %}
+    <div class="col border border-black" style="max-height: 50vh; justify-content: center;">
+        <img src="{{ post.item.img_url }}">
+    </div>
+    {% endif %}
+    <div class="col m-0 h1">{{ post.item.name }}</div>
+    <div class="col mb-3">Sold by {{ post.seller }}.</div>
+    <p>{{ post.item.description }}</p>
+
+    {% if not post.winner and user.is_authenticated and user == post.seller %}
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Close Listing</button>
+        </form>
+    {% endif %}
+</div>

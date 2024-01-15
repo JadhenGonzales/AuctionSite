@@ -5,68 +5,64 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ post.item.name }}</h1>
-
-    {% if post.item.img_url %}
-        <img src="{{ post.item.img_url }}">
-    {% endif %}
-
-    <div>posted by {{ post.seller }}</div>
-    <div>current price: {{ post.initial_p }}</div>
-    <div>{{ post.item.description }}</div>
-
-    {% if not post.winner %}
-        {% if user.is_authenticated and user == post.seller %}
-        <form method="POST">
-            {% csrf_token %}
-            <button type="submit">Close Listing</button>
-        </form>
+    <div class="container-fluid p-0">
+        {% if post.winner %}
+        <div class="row alert alert-info m-1">
+            {% if user.is_authenticated and user == post.winner %}
+                You have won this listing 
+            {% else %}
+                This listing is closed.
+            {% endif %}
+        </div>
         {% endif %}
-    {% else %}
-        {% if user.is_authenticated and user == post.winner %}
-            <div> You have won this listing </div>
-        {% else %}
-            <div>This listing is closed.</div>
-        {% endif %}
-    {% endif %}
+        <div class="row">
+            <div class="col-9">
 
-    <h2>Bids:</h2>
-    {% if user.is_authenticated and not post.winner %}
-        <form action="{% url 'bid' post_id=post.id %}" method="POST">
-            {% csrf_token %}
-            {{ bidform.amount }}
-            <button type="submit">Bid</button>
-        </form>
-    {% endif %}
+                {% include "reusables/item_info.html" with post=post %}
+                
+                <div class="row">
+                    <h2>Comments:</h2>
+                
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'comment' post_id=post.id %}" method="POST">
+                            {% csrf_token %}
+                            {{ commentform }}
+                            <button type="submit">Comment</button>
+                        </form>
+                    {% endif %}
+                
+                    {% if comments %}
+                        <ul>
+                            {% for comment in comments %}
+                                <li>{{ comment.comment_datetime }}: {{ comment }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div>No Comments.</div>
+                    {% endif %}
+                </div>
+            </div>
 
-    {% if bids %}
-        <ul>
-            {% for bid in bids %}
-                <li>{{ bid.bid_datetime }}: {{ bid }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <div>No bids.</div>
-    {% endif %}
-    
-    <h2>Comments:</h2>
-
-    {% if user.is_authenticated %}
-        <form action="{% url 'comment' post_id=post.id %}" method="POST">
-            {% csrf_token %}
-            {{ commentform }}
-            <button type="submit">Comment</button>
-        </form>
-    {% endif %}
-
-    {% if comments %}
-        <ul>
-            {% for comment in comments %}
-                <li>{{ comment.comment_datetime }}: {{ comment }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <div>No Comments.</div>
-    {% endif %}
-
+            <div class="col-md-3 border border-black">
+                <h2>Bids:</h2>
+                {% if user.is_authenticated and not post.winner %}
+                    <form action="{% url 'bid' post_id=post.id %}" method="POST">
+                        {% csrf_token %}
+                        {{ bidform.amount }}
+                        <button type="submit">Bid</button>
+                    </form>
+                {% endif %}
+            
+                {% if bids %}
+                    <ul>
+                        {% for bid in bids %}
+                            <li>{{ bid.bid_datetime }}: {{ bid }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div>No bids.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
