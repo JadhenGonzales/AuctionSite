@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <div class="d-flex flex-wrap pt-2">
+    <div class="d-flex flex-wrap p-1 justify-content-center justify-content-sm-start" style="overflow: hidden;">
     {% for post in posts %}
         {% include "reusables/card.html" with name=post.item.name description=post.item.description price=post.initial_p bid_price=post.bid img_src=post.item.img_url id=post.id %}
     {% endfor %}

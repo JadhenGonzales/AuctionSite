@@ -1,15 +1,15 @@
-<div class="card m-3">
-    <div class="p-1 position-relative" style="height: 40%;">
+<div class="card m-1">
+    <div class="position-relative" style="height: 40%;">
       {% if img_src %}
         <img src="{{ img_src }}">
       {% else %}
         <div class="container-fluid text-center position-absolute top-50 start-50 translate-middle">No Image Provided</div>
       {% endif %}
     </div>
-    <div class="card-body d-flex flex-column">
+    <div class="card-body d-flex flex-column p-2">
       <h5 class="card-title">{{ name }}</h5>
       <h6 class="card-subtitle mb-2 text-body-secondary">{% if bid_price %}{{ bid_price }}{% else %}{{ price }}{% endif %} gold</h6>
-      <p class="card-text">{{ description }}</p>
+      <p class="card-text flex-fill">{{ description }}</p>
       <a href="{% url 'post' post_id=id %}" class="btn btn-primary">View Listing</a>
     </div>
 </div>

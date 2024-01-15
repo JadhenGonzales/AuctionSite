@@ -1,0 +1,27 @@
+{% if user.is_authenticated and not post.winner %}
+    <div class="h5 pt-3">Bid on this item:</div>
+    <form action="{% url 'bid' post_id=post.id %}" method="POST" class="my-2">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-8">
+                {{ bidform.amount }}
+            </div>
+            <div class="col-4 d-grid p-0 pe-3">
+                <button type="submit" class="btn btn-outline-dark">Bid</button>
+            </div>
+        </div>
+    </form>
+{% endif %}
+
+{% if bids %}
+    <ul class="pe-3 container">
+        {% for bid in bids %}
+            <div class="row">
+                <div class="col-6">{{ bid.bidder }}</div>
+                <div class="col-6">{{ bid.amount }}</div>
+            </div>
+        {% endfor %}
+    </ul>
+{% else %}
+    <div>No bids yet.</div>
+{% endif %}

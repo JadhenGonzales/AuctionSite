@@ -1,11 +1,17 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .card {
-    height: 350px; 
-    width: 230px;
+    height: 340px; 
+    width: 220px;
 }
 
 .card-text {
     overflow: hidden;
-    height: 68.25px;
+    height: 60px;
 }
 
 img {

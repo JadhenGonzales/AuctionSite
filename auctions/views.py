@@ -15,7 +15,7 @@ from .forms import AddForm, BidForm, CommentForm
 
 def index(request):
     bids = Bid.objects.filter(post=OuterRef('pk')).order_by('-amount').values('amount')[:1]
-    posts = Post.objects.annotate(bid=Subquery(bids))
+    posts = Post.objects.filter(winner__isnull=True).annotate(bid=Subquery(bids))
     return render(request, "auctions/index.html", {
         "current_page": "index",
         "posts": posts,
