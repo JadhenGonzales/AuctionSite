@@ -6,28 +6,32 @@ class AddForm(forms.Form):
     # For Adding postings
     item_name = forms.CharField(
         label="Item name",
-        max_length=64
+        max_length=64,
+        widget=forms.TextInput(attrs={"class": "form-control border border-dark"}),
         )
     
     item_categories = forms.ModelMultipleChoiceField(
         Category.objects.all(),
         required=False,
+        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
     )
 
     item_description = forms.CharField(
         label="Description",
-        widget=forms.Textarea(),
-        max_length=500
+        max_length=500,
+        widget=forms.Textarea(attrs={"class": "form-control border border-dark", "rows": 10}),
         )
     
     item_img = forms.CharField(
         label="Image URL",
         required=False,
         max_length=100,
+        widget=forms.TextInput(attrs={"class": "form-control  border border-dark"}),
         )
     
     initial_bid = forms.IntegerField(
         label="Initial Bid",
+        widget=forms.NumberInput(attrs={"class": "form-control  border border-dark"}),
     )
 
 

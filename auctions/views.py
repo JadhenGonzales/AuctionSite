@@ -19,7 +19,6 @@ def index(request):
     return render(request, "auctions/index.html", {
         "current_page": "index",
         "posts": posts,
-        "header": "Active Listings",
     })
 
 
@@ -202,13 +201,17 @@ def register(request):
 
 
 def view_all(request, category):
+    # Render index with filter based on category
     if category == "all":
         posts = Post.objects.all()
     else:
         posts = Post.objects.filter(item__categories__cat_name=category)
+
+    categories = Category.objects.all().order_by("cat_name")
     
-    return render(request, "auctions/index.html", {
-        "posts": posts,
+    return render(request, "auctions/all.html", {
+        "categories": categories,
         "header": category.capitalize(),
-        "current_page": category
+        "posts": posts,
+        "current_page": category,
     })

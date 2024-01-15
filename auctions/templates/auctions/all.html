@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="container-fluid m-0 p-0">
+        <div class="row m-0 p-0">
+            <div class="col-sm-10 d-flex flex-wrap p-1 justify-content-center justify-content-sm-start" style="overflow: hidden;">
+                {% for post in posts %}
+                    {% include "reusables/card.html" with name=post.item.name description=post.item.description price=post.initial_p bid_price=post.bid img_src=post.item.img_url id=post.id %}
+                {% endfor %}
+            </div>
+            <div class="col-sm-2">
+                <h5 class="text-center">Categories</h5>
+                <ul class="list-group">
+                {% for category in categories %}
+                    <li class="list-group-item p-1">
+                        <a href="{% url 'show' category=category %}" class="">{{ category }}</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
