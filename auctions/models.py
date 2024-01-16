@@ -31,6 +31,7 @@ class Post(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     initial_p = models.IntegerField()
     post_datetime = models.DateTimeField()
+    watched_by = models.ManyToManyField(User, blank=True, related_name="watchlist")
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name="wins")
 
     def __str__(self) -> str:

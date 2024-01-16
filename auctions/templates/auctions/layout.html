@@ -28,6 +28,9 @@
                                 <a class="nav-link {% if current_page %}{{ 'add'|is_current:current_page }}{% endif %}" href="{% url 'add_listing' %}">Create Listing</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link {% if current_page %}{{ 'watchlist'|is_current:current_page }}{% endif %}" href="{% url 'watchlist' %}">Watchlist</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                             </li>
                         {% else %}

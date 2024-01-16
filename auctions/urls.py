@@ -12,4 +12,5 @@ urlpatterns = [
     path("post/<str:post_id>", views.post, name="post"),
     path("register", views.register, name="register"),
     path("show/<str:category>", views.view_all, name="show"),
+    path("watchlist", views.watchlist, name="watchlist"),
 ]

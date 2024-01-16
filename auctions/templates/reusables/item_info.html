@@ -7,11 +7,22 @@
     <div class="col m-0 h1">{{ post.item.name }}</div>
     <div class="col mb-3">Sold by {{ post.seller }}.</div>
     <p>{{ post.item.description }}</p>
+</div>
 
-    {% if not post.winner and user.is_authenticated and user == post.seller %}
-        <form method="POST">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-dark">Close Listing</button>
-        </form>
+<div class="px-3">
+    {% if not post.winner and user.is_authenticated %}
+        {% if user_status == "seller" %}
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark" name="action" value="close">Close Listing</button>
+            </form>
+        {% elif user_status == "watching" %}
+            <button class="btn btn-outline-dark" disabled>Watching</button>
+        {% elif user_status == "logged_in" %}
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-dark" name="action" value="watch">Add to watchlist</button>
+            </form>
+        {% endif %}
     {% endif %}
 </div>

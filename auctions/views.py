@@ -142,15 +142,22 @@ def logout_view(request):
 
 def post(request, post_id):
     if request.method == "POST":
+        action = request.POST.get("action")
         target_post = Post.objects.get(id=post_id)
-        if not target_post.winner and request.user.is_authenticated and request.user == target_post.seller:
-            winning = Bid.objects.filter(post=target_post).order_by('-bid_datetime').first()
-            target_post.winner = winning.bidder
-            target_post.save()
-            return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
 
-        else:
-            return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
+        if action == "close":
+            if not target_post.winner and request.user.is_authenticated and request.user == target_post.seller:
+                winning = Bid.objects.filter(post=target_post).order_by('-bid_datetime').first()
+                target_post.winner = winning.bidder
+                target_post.save()
+        elif action == "watch":
+            if not target_post.winner and request.user.is_authenticated and request.user != target_post.seller:
+                if request.user not in target_post.watched_by.all():
+                    print("test")
+                    target_post.watched_by.add(request.user)
+                    target_post.save()
+
+        return HttpResponseRedirect(reverse("post", kwargs={"post_id": post_id,}))
     
     else:
         # If request.method is GET
@@ -159,6 +166,15 @@ def post(request, post_id):
         # "-fieldname" is used instead of .reverse() because .reverse() fetches the query list then reverses it.
         bids = Bid.objects.filter(post__id=post_id).order_by("-bid_datetime")
         comments = Comment.objects.filter(posting__id=post_id).order_by("-comment_datetime")
+
+        user = "logged_out"
+        if request.user.is_authenticated:
+            if request.user == post.seller:
+                user = "seller"
+            elif request.user in post.watched_by.all():
+                user = "watching"
+            else:
+                user = "logged_in"
 
 
         return render(request, "auctions/post.html", {
@@ -169,6 +185,7 @@ def post(request, post_id):
             "comments": comments,
             "current_page": "post",
             "messages": messages.get_messages(request),
+            "user_status": user
         })
 
 def register(request):
@@ -214,4 +231,13 @@ def view_all(request, category):
         "header": category.capitalize(),
         "posts": posts,
         "current_page": category,
+    })
+
+@login_required
+def watchlist(request):
+    posts = Post.objects.filter(watched_by=request.user)
+
+    return render(request, "auctions/index.html", {
+        "posts": posts,
+        "current_page": "watchlist",
     })

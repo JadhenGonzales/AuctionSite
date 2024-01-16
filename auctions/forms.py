@@ -13,7 +13,7 @@ class AddForm(forms.Form):
     item_categories = forms.ModelMultipleChoiceField(
         Category.objects.all(),
         required=False,
-        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
+        widget=forms.SelectMultiple(attrs={"class": "form-select border border-dark"}),
     )
 
     item_description = forms.CharField(

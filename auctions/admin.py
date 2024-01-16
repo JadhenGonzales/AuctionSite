@@ -30,6 +30,8 @@ class ItemAdmin(admin.ModelAdmin):
 class PostAdmin(admin.ModelAdmin):
     list_display = ("item", "seller", "post_datetime", "winner",)
 
+    filter_horizontal = ("watched_by",)
+
 class CustomUserAdmin(BaseUserAdmin):
     list_display = ("username", "first_name", "last_name", "is_staff",)
 
